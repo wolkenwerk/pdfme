@@ -1,16 +1,7 @@
 import { PDFDocument } from '@pdfme/pdf-lib';
 import * as fontkit from 'fontkit';
-import type {
-  Font,
-  GenerateProps,
-  SchemaInputs,
-  Template,
-} from '@pdfme/common';
-import {
-  getDefaultFont,
-  getFallbackFontName,
-  checkGenerateProps,
-} from '@pdfme/common';
+import type { Font, GenerateProps, SchemaInputs, Template } from '@pdfme/common';
+import { getDefaultFont, getFallbackFontName, checkGenerateProps } from '@pdfme/common';
 import {
   getEmbeddedPagesAndEmbedPdfBoxes,
   drawInputByTemplateSchema,
@@ -20,8 +11,25 @@ import {
 } from './helper.js';
 import { TOOL_NAME } from './constants.js';
 
-const preprocessing = async (arg: { inputs: SchemaInputs[]; template: Template; font: Font }) => {
-  const { template, font } = arg;
+interface PDFMetadata {
+  title: string;
+  subject: string;
+  author: string;
+  creator: string;
+  producer: string;
+  language: string;
+  keywords: string[];
+  creation_date: Date;
+  modification_date: Date;
+}
+
+const preprocessing = async (arg: {
+  inputs: SchemaInputs[];
+  template: Template;
+  font: Font;
+  metadata?: PDFMetadata;
+}) => {
+  const { template, font, metadata } = arg;
   const { basePdf } = template;
   const fallbackFontName = getFallbackFontName(font);
 
@@ -30,6 +38,16 @@ const preprocessing = async (arg: { inputs: SchemaInputs[]; template: Template; 
   pdfDoc.registerFontkit(fontkit);
 
   const pdfFontObj = await embedAndGetFontObj({ pdfDoc, font });
+
+  metadata?.title && pdfDoc.setTitle(metadata.title);
+  metadata?.subject && pdfDoc.setSubject(metadata.subject);
+  metadata?.author && pdfDoc.setAuthor(metadata.author);
+  metadata?.creator && pdfDoc.setCreator(metadata.creator);
+  metadata?.producer && pdfDoc.setProducer(metadata.producer);
+  metadata?.language && pdfDoc.setLanguage(metadata.language);
+  metadata?.keywords && pdfDoc.setKeywords(metadata.keywords);
+  metadata?.creation_date && pdfDoc.setCreationDate(metadata.creation_date);
+  metadata?.modification_date && pdfDoc.setModificationDate(metadata.modification_date);
 
   const pagesAndBoxes = await getEmbeddedPagesAndEmbedPdfBoxes({ pdfDoc, basePdf });
   const { embeddedPages, embedPdfBoxes } = pagesAndBoxes;
