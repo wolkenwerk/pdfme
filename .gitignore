@@ -3,6 +3,5 @@
 /node_modules
 /packages/*/node_modules
 .cache
-dist
 coverage/
 __tests__/assets/pdfs/tmp/*.pdf

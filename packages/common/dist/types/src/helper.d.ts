@@ -1,0 +1,13 @@
+import { BasePdf, BarCodeType } from './type';
+export declare const mm2pt: (mm: number) => number;
+export declare const pt2mm: (pt: number) => number;
+export declare const getB64BasePdf: (basePdf: BasePdf) => string | Promise<string>;
+export declare const b64toUint8Array: (base64: string) => Uint8Array;
+export declare const checkInputs: (data: unknown) => void;
+export declare const checkUIOptions: (data: unknown) => void;
+export declare const checkTemplate: (data: unknown) => void;
+export declare const checkUIProps: (data: unknown) => void;
+export declare const checkPreviewProps: (data: unknown) => void;
+export declare const checkDesignerProps: (data: unknown) => void;
+export declare const checkGenerateProps: (data: unknown) => void;
+export declare const validateBarcodeInput: (type: BarCodeType, input: string) => boolean;
