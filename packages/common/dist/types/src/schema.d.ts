@@ -127,6 +127,37 @@ export declare const TextSchema: z.ZodObject<{
         fit?: string | undefined;
     } | undefined;
 }>;
+export declare const Metadata: z.ZodObject<{
+    title: z.ZodOptional<z.ZodString>;
+    subject: z.ZodOptional<z.ZodString>;
+    author: z.ZodOptional<z.ZodString>;
+    creator: z.ZodOptional<z.ZodString>;
+    producer: z.ZodOptional<z.ZodString>;
+    language: z.ZodOptional<z.ZodString>;
+    keywords: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+    creation_date: z.ZodOptional<z.ZodDate>;
+    modification_date: z.ZodOptional<z.ZodDate>;
+}, "strip", z.ZodTypeAny, {
+    title?: string | undefined;
+    subject?: string | undefined;
+    author?: string | undefined;
+    creator?: string | undefined;
+    producer?: string | undefined;
+    language?: string | undefined;
+    keywords?: string[] | undefined;
+    creation_date?: Date | undefined;
+    modification_date?: Date | undefined;
+}, {
+    title?: string | undefined;
+    subject?: string | undefined;
+    author?: string | undefined;
+    creator?: string | undefined;
+    producer?: string | undefined;
+    language?: string | undefined;
+    keywords?: string[] | undefined;
+    creation_date?: Date | undefined;
+    modification_date?: Date | undefined;
+}>;
 export declare const ImageSchema: z.ZodObject<{
     height: z.ZodNumber;
     width: z.ZodNumber;
@@ -1400,6 +1431,38 @@ export declare const GenerateProps: z.ZodObject<{
         columns?: string[] | undefined;
     }>;
     inputs: z.ZodArray<z.ZodRecord<z.ZodString, z.ZodString>, "many">;
+    metadata: z.ZodOptional<z.ZodObject<{
+        title: z.ZodOptional<z.ZodString>;
+        subject: z.ZodOptional<z.ZodString>;
+        author: z.ZodOptional<z.ZodString>;
+        creator: z.ZodOptional<z.ZodString>;
+        producer: z.ZodOptional<z.ZodString>;
+        language: z.ZodOptional<z.ZodString>;
+        keywords: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+        creation_date: z.ZodOptional<z.ZodDate>;
+        modification_date: z.ZodOptional<z.ZodDate>;
+    }, "strip", z.ZodTypeAny, {
+        title?: string | undefined;
+        subject?: string | undefined;
+        author?: string | undefined;
+        creator?: string | undefined;
+        producer?: string | undefined;
+        language?: string | undefined;
+        keywords?: string[] | undefined;
+        creation_date?: Date | undefined;
+        modification_date?: Date | undefined;
+    }, {
+        title?: string | undefined;
+        subject?: string | undefined;
+        author?: string | undefined;
+        creator?: string | undefined;
+        producer?: string | undefined;
+        language?: string | undefined;
+        keywords?: string[] | undefined;
+        creation_date?: Date | undefined;
+        modification_date?: Date | undefined;
+    }>>;
+    b64: z.ZodOptional<z.ZodBoolean>;
     options: z.ZodOptional<z.ZodObject<{
         font: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodObject<{
             data: z.ZodUnion<[z.ZodString, z.ZodType<ArrayBuffer, z.ZodTypeDef, ArrayBuffer>, z.ZodType<Uint8Array, z.ZodTypeDef, Uint8Array>]>;
@@ -1474,6 +1537,18 @@ export declare const GenerateProps: z.ZodObject<{
         columns?: string[] | undefined;
     };
     inputs: Record<string, string>[];
+    metadata?: {
+        title?: string | undefined;
+        subject?: string | undefined;
+        author?: string | undefined;
+        creator?: string | undefined;
+        producer?: string | undefined;
+        language?: string | undefined;
+        keywords?: string[] | undefined;
+        creation_date?: Date | undefined;
+        modification_date?: Date | undefined;
+    } | undefined;
+    b64?: boolean | undefined;
     options?: {
         font?: Record<string, {
             data: (string | ArrayBuffer | Uint8Array) & (string | ArrayBuffer | Uint8Array | undefined);
@@ -1528,6 +1603,18 @@ export declare const GenerateProps: z.ZodObject<{
         columns?: string[] | undefined;
     };
     inputs: Record<string, string>[];
+    metadata?: {
+        title?: string | undefined;
+        subject?: string | undefined;
+        author?: string | undefined;
+        creator?: string | undefined;
+        producer?: string | undefined;
+        language?: string | undefined;
+        keywords?: string[] | undefined;
+        creation_date?: Date | undefined;
+        modification_date?: Date | undefined;
+    } | undefined;
+    b64?: boolean | undefined;
     options?: {
         font?: Record<string, {
             data: (string | ArrayBuffer | Uint8Array) & (string | ArrayBuffer | Uint8Array | undefined);

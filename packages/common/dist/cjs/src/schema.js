@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DesignerReactProps = exports.DesignerProps = exports.PreviewReactProps = exports.PreviewProps = exports.UIProps = exports.UIOptions = exports.SchemaInputs = exports.GenerateProps = exports.GeneratorOptions = exports.CommonProps = exports.Inputs = exports.Template = exports.BasePdf = exports.Font = exports.SchemaForUI = exports.Schema = exports.BarcodeSchema = exports.ImageSchema = exports.TextSchema = exports.CommonSchema = exports.SchemaType = exports.BarcodeSchemaType = exports.schemaTypes = exports.barcodeSchemaTypes = exports.Alignment = exports.Size = exports.Lang = void 0;
+exports.DesignerReactProps = exports.DesignerProps = exports.PreviewReactProps = exports.PreviewProps = exports.UIProps = exports.UIOptions = exports.SchemaInputs = exports.GenerateProps = exports.GeneratorOptions = exports.CommonProps = exports.Inputs = exports.Template = exports.BasePdf = exports.Font = exports.SchemaForUI = exports.Schema = exports.BarcodeSchema = exports.ImageSchema = exports.Metadata = exports.TextSchema = exports.CommonSchema = exports.SchemaType = exports.BarcodeSchemaType = exports.schemaTypes = exports.barcodeSchemaTypes = exports.Alignment = exports.Size = exports.Lang = void 0;
 /* eslint dot-notation: "off"*/
 const zod_1 = require("zod");
 const langs = ['en', 'ja', 'ar', 'th', 'pl'];
@@ -30,17 +30,32 @@ exports.TextSchema = exports.CommonSchema.extend({
     backgroundColor: zod_1.z.string().optional(),
     characterSpacing: zod_1.z.number().optional(),
     lineHeight: zod_1.z.number().optional(),
-    dynamicFontSize: zod_1.z.object({
+    dynamicFontSize: zod_1.z
+        .object({
         max: zod_1.z.number(),
         min: zod_1.z.number(),
         fit: zod_1.z.string().optional(),
-    }).optional(),
+    })
+        .optional(),
+});
+exports.Metadata = zod_1.z.object({
+    title: zod_1.z.string().optional(),
+    subject: zod_1.z.string().optional(),
+    author: zod_1.z.string().optional(),
+    creator: zod_1.z.string().optional(),
+    producer: zod_1.z.string().optional(),
+    language: zod_1.z.string().optional(),
+    keywords: zod_1.z.array(zod_1.z.string()).optional(),
+    creation_date: zod_1.z.date().optional(),
+    modification_date: zod_1.z.date().optional(),
 });
 exports.ImageSchema = exports.CommonSchema.extend({ type: zod_1.z.literal(exports.SchemaType.Enum.image) });
 exports.BarcodeSchema = exports.CommonSchema.extend({ type: exports.BarcodeSchemaType });
 exports.Schema = zod_1.z.union([exports.TextSchema, exports.ImageSchema, exports.BarcodeSchema]);
 const SchemaForUIAdditionalInfo = zod_1.z.object({
-    id: zod_1.z.string(), key: zod_1.z.string(), data: zod_1.z.string(),
+    id: zod_1.z.string(),
+    key: zod_1.z.string(),
+    data: zod_1.z.string(),
 });
 exports.SchemaForUI = zod_1.z.union([
     exports.TextSchema.merge(SchemaForUIAdditionalInfo),
@@ -71,6 +86,8 @@ exports.CommonProps = zod_1.z.object({
 exports.GeneratorOptions = CommonOptions;
 exports.GenerateProps = exports.CommonProps.extend({
     inputs: exports.Inputs,
+    metadata: exports.Metadata.optional(),
+    b64: zod_1.z.boolean().optional(),
     options: exports.GeneratorOptions.optional(),
 }).strict();
 exports.SchemaInputs = zod_1.z.record(zod_1.z.string());

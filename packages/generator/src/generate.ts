@@ -12,24 +12,19 @@ import {
 import { TOOL_NAME } from './constants.js';
 
 interface PDFMetadata {
-  title: string;
-  subject: string;
-  author: string;
-  creator: string;
-  producer: string;
-  language: string;
-  keywords: string[];
-  creation_date: Date;
-  modification_date: Date;
+  title?: string;
+  subject?: string;
+  author?: string;
+  creator?: string;
+  producer?: string;
+  language?: string;
+  keywords?: string[];
+  creation_date?: Date;
+  modification_date?: Date;
 }
 
-const preprocessing = async (arg: {
-  inputs: SchemaInputs[];
-  template: Template;
-  font: Font;
-  metadata?: PDFMetadata;
-}) => {
-  const { template, font, metadata } = arg;
+const preprocessing = async (arg: { inputs: SchemaInputs[]; template: Template; font: Font }) => {
+  const { template, font } = arg;
   const { basePdf } = template;
   const fallbackFontName = getFallbackFontName(font);
 
@@ -39,6 +34,15 @@ const preprocessing = async (arg: {
 
   const pdfFontObj = await embedAndGetFontObj({ pdfDoc, font });
 
+  const pagesAndBoxes = await getEmbeddedPagesAndEmbedPdfBoxes({ pdfDoc, basePdf });
+  const { embeddedPages, embedPdfBoxes } = pagesAndBoxes;
+
+  return { pdfDoc, pdfFontObj, fallbackFontName, embeddedPages, embedPdfBoxes };
+};
+
+const postProcessing = (pdfDoc: PDFDocument, metadata?: PDFMetadata) => {
+  pdfDoc.setProducer(TOOL_NAME);
+  pdfDoc.setCreator(TOOL_NAME);
   metadata?.title && pdfDoc.setTitle(metadata.title);
   metadata?.subject && pdfDoc.setSubject(metadata.subject);
   metadata?.author && pdfDoc.setAuthor(metadata.author);
@@ -48,21 +52,11 @@ const preprocessing = async (arg: {
   metadata?.keywords && pdfDoc.setKeywords(metadata.keywords);
   metadata?.creation_date && pdfDoc.setCreationDate(metadata.creation_date);
   metadata?.modification_date && pdfDoc.setModificationDate(metadata.modification_date);
-
-  const pagesAndBoxes = await getEmbeddedPagesAndEmbedPdfBoxes({ pdfDoc, basePdf });
-  const { embeddedPages, embedPdfBoxes } = pagesAndBoxes;
-
-  return { pdfDoc, pdfFontObj, fallbackFontName, embeddedPages, embedPdfBoxes };
-};
-
-const postProcessing = (pdfDoc: PDFDocument) => {
-  pdfDoc.setProducer(TOOL_NAME);
-  pdfDoc.setCreator(TOOL_NAME);
 };
 
 const generate = async (props: GenerateProps) => {
   checkGenerateProps(props);
-  const { inputs, template, options = {} } = props;
+  const { inputs, template, options = {}, metadata, b64 = false } = props;
   const { font = getDefaultFont() } = options;
   const { schemas } = template;
 
@@ -100,9 +94,12 @@ const generate = async (props: GenerateProps) => {
     }
   }
 
-  postProcessing(pdfDoc);
-
-  return pdfDoc.save();
+  postProcessing(pdfDoc, metadata);
+  if (b64) {
+    return await pdfDoc.saveAsBase64();
+  } else {
+    return await pdfDoc.save();
+  }
 };
 
 export default generate;

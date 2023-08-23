@@ -27,17 +27,32 @@ export const TextSchema = CommonSchema.extend({
     backgroundColor: z.string().optional(),
     characterSpacing: z.number().optional(),
     lineHeight: z.number().optional(),
-    dynamicFontSize: z.object({
+    dynamicFontSize: z
+        .object({
         max: z.number(),
         min: z.number(),
         fit: z.string().optional(),
-    }).optional(),
+    })
+        .optional(),
+});
+export const Metadata = z.object({
+    title: z.string().optional(),
+    subject: z.string().optional(),
+    author: z.string().optional(),
+    creator: z.string().optional(),
+    producer: z.string().optional(),
+    language: z.string().optional(),
+    keywords: z.array(z.string()).optional(),
+    creation_date: z.date().optional(),
+    modification_date: z.date().optional(),
 });
 export const ImageSchema = CommonSchema.extend({ type: z.literal(SchemaType.Enum.image) });
 export const BarcodeSchema = CommonSchema.extend({ type: BarcodeSchemaType });
 export const Schema = z.union([TextSchema, ImageSchema, BarcodeSchema]);
 const SchemaForUIAdditionalInfo = z.object({
-    id: z.string(), key: z.string(), data: z.string(),
+    id: z.string(),
+    key: z.string(),
+    data: z.string(),
 });
 export const SchemaForUI = z.union([
     TextSchema.merge(SchemaForUIAdditionalInfo),
@@ -68,6 +83,8 @@ export const CommonProps = z.object({
 export const GeneratorOptions = CommonOptions;
 export const GenerateProps = CommonProps.extend({
     inputs: Inputs,
+    metadata: Metadata.optional(),
+    b64: z.boolean().optional(),
     options: GeneratorOptions.optional(),
 }).strict();
 export const SchemaInputs = z.record(z.string());

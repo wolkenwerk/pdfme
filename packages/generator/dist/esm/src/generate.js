@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { PDFDocument } from '@pdfme/pdf-lib';
 import * as fontkit from 'fontkit';
-import { getDefaultFont, getFallbackFontName, checkGenerateProps, } from '@pdfme/common';
+import { getDefaultFont, getFallbackFontName, checkGenerateProps } from '@pdfme/common';
 import { getEmbeddedPagesAndEmbedPdfBoxes, drawInputByTemplateSchema, drawEmbeddedPage, embedAndGetFontObj, } from './helper.js';
 import { TOOL_NAME } from './constants.js';
 const preprocessing = (arg) => __awaiter(void 0, void 0, void 0, function* () {
@@ -24,13 +24,22 @@ const preprocessing = (arg) => __awaiter(void 0, void 0, void 0, function* () {
     const { embeddedPages, embedPdfBoxes } = pagesAndBoxes;
     return { pdfDoc, pdfFontObj, fallbackFontName, embeddedPages, embedPdfBoxes };
 });
-const postProcessing = (pdfDoc) => {
+const postProcessing = (pdfDoc, metadata) => {
     pdfDoc.setProducer(TOOL_NAME);
     pdfDoc.setCreator(TOOL_NAME);
+    (metadata === null || metadata === void 0 ? void 0 : metadata.title) && pdfDoc.setTitle(metadata.title);
+    (metadata === null || metadata === void 0 ? void 0 : metadata.subject) && pdfDoc.setSubject(metadata.subject);
+    (metadata === null || metadata === void 0 ? void 0 : metadata.author) && pdfDoc.setAuthor(metadata.author);
+    (metadata === null || metadata === void 0 ? void 0 : metadata.creator) && pdfDoc.setCreator(metadata.creator);
+    (metadata === null || metadata === void 0 ? void 0 : metadata.producer) && pdfDoc.setProducer(metadata.producer);
+    (metadata === null || metadata === void 0 ? void 0 : metadata.language) && pdfDoc.setLanguage(metadata.language);
+    (metadata === null || metadata === void 0 ? void 0 : metadata.keywords) && pdfDoc.setKeywords(metadata.keywords);
+    (metadata === null || metadata === void 0 ? void 0 : metadata.creation_date) && pdfDoc.setCreationDate(metadata.creation_date);
+    (metadata === null || metadata === void 0 ? void 0 : metadata.modification_date) && pdfDoc.setModificationDate(metadata.modification_date);
 };
 const generate = (props) => __awaiter(void 0, void 0, void 0, function* () {
     checkGenerateProps(props);
-    const { inputs, template, options = {} } = props;
+    const { inputs, template, options = {}, metadata, b64 = false } = props;
     const { font = getDefaultFont() } = options;
     const { schemas } = template;
     const preRes = yield preprocessing({ inputs, template, font });
@@ -62,8 +71,13 @@ const generate = (props) => __awaiter(void 0, void 0, void 0, function* () {
             }
         }
     }
-    postProcessing(pdfDoc);
-    return pdfDoc.save();
+    postProcessing(pdfDoc, metadata);
+    if (b64) {
+        return yield pdfDoc.saveAsBase64();
+    }
+    else {
+        return yield pdfDoc.save();
+    }
 });
 export default generate;
 //# sourceMappingURL=generate.js.map
