@@ -1,5 +1,6 @@
 *.log
 .DS_Store
+/dist
 /node_modules
 /packages/*/node_modules
 .cache
