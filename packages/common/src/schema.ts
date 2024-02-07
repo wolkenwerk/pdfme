@@ -122,6 +122,7 @@ export const GeneratorOptions = CommonOptions.extend({
   producer: z.string().optional(),
   subject: z.string().optional(),
   title: z.string().optional(),
+  b64: z.boolean().optional(),
 });
 
 export const GenerateProps = CommonProps.extend({

@@ -12,7 +12,7 @@ const generate = async (props: GenerateProps) => {
   }
 
   const { pdfDoc, embeddedPages, embedPdfBoxes, renderObj, readOnlySchemaKeys } =
-    await preprocessing({ template, userPlugins });
+    await preprocessing({ template, userPlugins, options });
 
   const keys = readOnlySchemaKeys.concat(Object.keys(inputs[0]));
   if (template.columns) {
@@ -50,7 +50,7 @@ const generate = async (props: GenerateProps) => {
 
   postProcessing({ pdfDoc, options });
 
-  return pdfDoc.save();
+  return options.b64 ? pdfDoc.saveAsBase64() : pdfDoc.save();
 };
 
 export default generate;

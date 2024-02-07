@@ -53,11 +53,25 @@ export const drawEmbeddedPage = (arg: {
   page.setTrimBox(tb.x, tb.y, tb.width, tb.height);
 };
 
-export const preprocessing = async (arg: { template: Template; userPlugins: Plugins }) => {
-  const { template, userPlugins } = arg;
+export const preprocessing = async (arg: {
+  template: Template;
+  userPlugins: Plugins;
+  options: GeneratorOptions;
+}) => {
+  const { template, userPlugins, options } = arg;
   const { basePdf, schemas } = template;
-
   const pdfDoc = await pdfLib.PDFDocument.create();
+
+  options.title && pdfDoc.setTitle(options.title);
+  options.subject && pdfDoc.setSubject(options.subject);
+  options.author && pdfDoc.setAuthor(options.author);
+  options.creator && pdfDoc.setCreator(options.creator);
+  options.producer && pdfDoc.setProducer(options.producer);
+  options.language && pdfDoc.setLanguage(options.language);
+  options.keywords && pdfDoc.setKeywords(options.keywords);
+  options.creationDate && pdfDoc.setCreationDate(options.creationDate);
+  options.modificationDate && pdfDoc.setModificationDate(options.modificationDate);
+
   // @ts-ignore
   pdfDoc.registerFontkit(fontkit);
 
